@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteer Portal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .navbar {
+            background-color: #fff;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        .navbar-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 5px;
+        }
+        .navbar-title {
+            font-weight: bold;
+            font-size: 18px;
+            color: orange;
+        }
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+        }
+        .navbar-user:hover .user-menu {
+            display: block;
+        }
+        .navbar-user img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+        .user-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 150px;
+            z-index: 1;
+        }
+        .user-menu-item {
+            padding: 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .user-menu-item:hover {
+            background-color: #f0f0f0;
+        }
+        .navbar-bottom {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding-top: 5px;
+            border-top: 1px solid #eee;
+        }
+        .navbar-bottom a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: #333;
+            position: relative;
+        }
+        .navbar-bottom a:hover {
+            background-color: #f0f0f0;
+        }
+        .submenu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 200px;
+            z-index: 1;
+        }
+        .navbar-bottom a:hover .submenu {
+            display: block;
+        }
+        .submenu-item {
+            padding: 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .submenu-item:hover {
+            background-color: #f0f0f0;
+        }
+        .dashboard {
+            padding: 20px;
+            display: none;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 60px;
+        }
+        .dashboard.active {
+            display: flex;
+        }
+        .card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            min-width: 300px;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            flex: 1;
+        }
+        .stat-box.orange {
+            background-color: #ffe5b4;
+        }
+        .stat-box.red {
+            background-color: #ffcccb;
+        }
+        .stat-box h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .stat-box p {
+            margin: 5px 0 0;
+            font-size: 14px;
+        }
+        .map-container {
+            text-align: center;
+            position: relative;
+        }
+        .map-container img {
+            width: 100%;
+            max-width: 600px;
+        }
+        .no-data {
+            color: red;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .recent-activity {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            flex: 0 0 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-top">
+            <div class="navbar-title">Volunteer Portal</div>
+            <div class="navbar-user">
+                <span id="user-name">Nguyễn Thế HoàngTùng</span>
+                <img src="https://via.placeholder.com/30" alt="User Avatar">
+                <div class="user-menu">
+                    <div class="user-menu-item" onclick="logout()">Logout</div>
+                </div>
+            </div>
+        </div>
+        <div class="navbar-bottom">
+            <a href="#" style="color: orange; font-weight: bold;">Dashboard</a>
+            <a href="#">Events
+                <div class="submenu">
+                    <div class="submenu-item">ALL Events</div>
+                    <div class="submenu-item">Registered Volunteers</div>
+                    <div class="submenu-item">Create Event</div>
+                </div>
+            </a>
+            <a href="#">Volunteer Opportunities
+                <div class="submenu">
+                    <div class="submenu-item">Upcoming Events</div>
+                    <div class="submenu-item">Current Events</div>
+                    <div class="submenu-item">Participated Events</div>
+                </div>
+            </a>
+            <a href="#">Profile
+                <div class="submenu">
+                    <div class="submenu-item">Reviews about Me</div>
+                    <div class="submenu-item">My Reviews</div>
+                    <div class="submenu-item">My Profile</div>
+                    <div class="submenu-item">My Logs</div>
+                    <div class="submenu-item">Volunteers Points</div>
+                </div>
+            </a>
+            <a href="#">Logs</a>
+            <a href="#">Reviews
+                <div class="submenu">
+                    <div class="submenu-item">All Reviews</div>
+                    <div class="submenu-item">Add Review</div>
+                </div>
+            </a>
+            <a href="#">Volunteer
+                <div class="submenu">
+                    <div class="submenu-item">Volunteer Registration</div>
+                    <div class="submenu-item">Volunteer Details</div>
+                </div>
+            </a>
+            <a href="#">Admin
+                <div class="submenu">
+                    <div class="submenu-item">Organization Details</div>
+                    <div class="submenu-item">Campaigns</div>
+                    <div class="submenu-item">Cities</div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="dashboard" id="dashboard">
+        <div class="stats">
+            <div class="stat-box orange">
+                <span style="font-size: 24px;">📅</span>
+                <h2>0</h2>
+                <p>TOTAL EVENTS</p>
+            </div>
+            <div class="stat-box red">
+                <span style="font-size: 24px;">👥</span>
+                <h2>0</h2>
+                <p>TOTAL VOLUNTEERS</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Volunteer Availability</h3>
+                <div>
+                    <button>Làm mới</button>
+                    <button>Sắp xếp</button>
+                </div>
+            </div>
+            <div class="no-data">Không Có Dữ Liệu</div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Volunteer Cities</h3>
+                <div>
+                    <button>Làm mới</button>
+                    <button>Sắp xếp</button>
+                </div>
+            </div>
+            <div class="map-container">
+                <img src="https://via.placeholder.com/600x300?text=World+Map" alt="World Map">
+                <div class="no-data">Không Có Dữ Liệu</div>
+            </div>
+        </div>
+
+        <div class="recent-activity">
+            <h3>Recent Activity</h3>
+            <div class="no-data">No Recent Activity</div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Volunteer Points</h3>
+                <div>
+                    <button>Làm mới</button>
+                    <button>Sắp xếp</button>
+                </div>
+            </div>
+            <div class="no-data">Không Có Dữ Liệu</div>
+        </div>
+    </div>
+
+    <script>
+        // Kiểm tra trạng thái đăng nhập khi tải trang
+        document.addEventListener('DOMContentLoaded', () => {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const dashboard = document.getElementById('dashboard');
+            if (isLoggedIn) {
+                dashboard.classList.add('active');
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+        // Đăng xuất
+        function logout() {
+            localStorage.setItem('isLoggedIn', 'false');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

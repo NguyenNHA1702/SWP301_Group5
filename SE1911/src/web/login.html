@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Sign Up</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #e0e8ff, #f0e4ff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .auth-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .auth-container h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .auth-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .auth-container select {
+            width: 20%;
+            padding: 10px;
+            margin: 10px 5px 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .auth-container input[type="checkbox"] {
+            width: auto;
+            margin-right: 5px;
+        }
+        .auth-container label {
+            font-size: 14px;
+            color: #666;
+        }
+        .auth-container button {
+            width: 100%;
+            padding: 12px;
+            background-color: #ff4d4d;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        .auth-container button:hover {
+            background-color: #e04343;
+        }
+        .auth-container .social-login {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .auth-container .social-login img {
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+        }
+        .auth-toggle {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        .auth-toggle a {
+            color: #ff4d4d;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container" id="auth-container">
+        <h2 id="auth-title">Login to Volunteer Portal</h2>
+        <input type="text" id="name" placeholder="Name *" style="display: none;">
+        <input type="email" id="email" placeholder="Business email *">
+        <input type="password" id="password" placeholder="Password *">
+        <div style="display: flex; align-items: center; display: none;" id="phone-section">
+            <select id="country-code">
+                <option value="+84">+84</option>
+            </select>
+            <input type="tel" id="phone" placeholder="Phone Number *" style="width: 80%;">
+        </div>
+        <div style="text-align: left; margin: 10px 0; display: none;" id="data-center">
+            <label>Your data will be stored in the US data center.</label>
+        </div>
+        <div style="text-align: left; margin: 10px 0; display: none;" id="terms-section">
+            <input type="checkbox" id="terms">
+            <label for="terms">I agree to the Terms of Service and Privacy Policy.</label>
+        </div>
+        <button onclick="handleAuth()">Login</button>
+        <div class="social-login">
+            <img src="https://via.placeholder.com/30?text=G" alt="Google Login">
+            <img src="https://via.placeholder.com/30?text=In" alt="LinkedIn Login">
+        </div>
+        <div class="auth-toggle">
+            Don’t have an account? <a href="#" onclick="toggleAuthMode()">Sign Up here</a>
+        </div>
+    </div>
+
+    <script>
+        let isSignUpMode = false;
+
+        function toggleAuthMode() {
+            isSignUpMode = !isSignUpMode;
+            const title = document.getElementById('auth-title');
+            const nameInput = document.getElementById('name');
+            const phoneSection = document.getElementById('phone-section');
+            const dataCenter = document.getElementById('data-center');
+            const termsSection = document.getElementById('terms-section');
+            const toggleText = document.querySelector('.auth-toggle');
+            const submitButton = document.querySelector('button');
+
+            if (isSignUpMode) {
+                title.textContent = 'Register';
+                nameInput.style.display = 'block';
+                phoneSection.style.display = 'flex';
+                dataCenter.style.display = 'block';
+                termsSection.style.display = 'block';
+                toggleText.innerHTML = 'Already have an account? <a href="#" onclick="toggleAuthMode()">Login here</a>';
+                submitButton.textContent = 'Sign Up for Free';
+            } else {
+                title.textContent = 'Login to Volunteer Portal';
+                nameInput.style.display = 'none';
+                phoneSection.style.display = 'none';
+                dataCenter.style.display = 'none';
+                termsSection.style.display = 'none';
+                toggleText.innerHTML = 'Don’t have an account? <a href="#" onclick="toggleAuthMode()">Sign Up here</a>';
+                submitButton.textContent = 'Login';
+            }
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function validatePhone(phone) {
+            const re = /^\+84\d{9,10}$/;
+            return re.test(phone);
+        }
+
+        async function handleAuth() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (!isSignUpMode) {
+                // Xử lý đăng nhập
+                if (!email || !password) {
+                    alert('Bạn cần nhập email và mật khẩu.');
+                    return;
+                }
+
+                if (!validateEmail(email)) {
+                    alert('Email không đúng định dạng. Vui lòng nhập email hợp lệ (ví dụ: abc@xyz.com).');
+                    return;
+                }
+
+                try {                    const command = `powershell.exe -File "../scripts/login_user.ps1" -email "${email}" -password "${password}"`;
+                    const response = await fetch('http://localhost:8080/run', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ command: command })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to execute PowerShell script');
+                    }
+
+                    const result = await response.text();
+                    if (result.includes("Login successful")) {
+                        localStorage.setItem('isLoggedIn', 'true');
+                        window.location.href = 'index.html';
+                    } else if (result.includes("Email not found")) {
+                        alert('Email không tồn tại. Vui lòng đăng ký.');
+                    } else if (result.includes("Incorrect password")) {
+                        alert('Mật khẩu sai.');
+                    } else {
+                        alert('Đăng nhập thất bại: ' + result);
+                    }
+                } catch (error) {
+                    alert('Lỗi khi đăng nhập: ' + error.message);
+                }
+            } else {
+                // Xử lý đăng ký
+                const name = document.getElementById('name').value;
+                const phone = document.getElementById('phone').value;
+                const terms = document.getElementById('terms').checked;
+
+                if (!name || !email || !password || !phone || !terms) {
+                    alert('Vui lòng điền đầy đủ thông tin và đồng ý với điều khoản.');
+                    return;
+                }
+
+                if (!validateEmail(email)) {
+                    alert('Email không đúng định dạng. Vui lòng nhập email hợp lệ (ví dụ: abc@xyz.com).');
+                    return;
+                }
+
+                if (!validatePhone(phone)) {
+                    alert('Số điện thoại không đúng định dạng. Vui lòng nhập số bắt đầu bằng +84 và có 9-10 chữ số.');
+                    return;
+                }
+
+                try {                    const command = `powershell.exe -File "../scripts/add_user.ps1" -name "${name}" -email "${email}" -password "${password}" -phone "${phone}"`;
+                    const response = await fetch('http://localhost:8080/run', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ command: command })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to execute PowerShell script');
+                    }
+
+                    const result = await response.text();
+                    if (result.includes("User added successfully")) {
+                        alert('Đăng ký thành công! Vui lòng đăng nhập.');
+                        toggleAuthMode();
+                    } else if (result.includes("Email already exists")) {
+                        alert('Email đã tồn tại. Vui lòng dùng email khác.');
+                    } else {
+                        alert('Đăng ký thất bại: ' + result);
+                    }
+                } catch (error) {
+                    alert('Lỗi khi đăng ký: ' + error.message);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
